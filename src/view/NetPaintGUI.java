@@ -27,7 +27,7 @@ import javax.swing.JScrollPane;
 
 import model.*;
 
-public class EtchASketch15 extends JFrame {
+public class NetPaintGUI extends JFrame {
 
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class EtchASketch15 extends JFrame {
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				JFrame frame = new EtchASketch15();
+				JFrame frame = new NetPaintGUI();
 				frame.setVisible(true);
 			}
 		});
@@ -52,20 +52,19 @@ public class EtchASketch15 extends JFrame {
 	private JPanel optionPanel;
 	private boolean lineDraw, rectDraw, ovalDraw, imageDraw;
 
-	public EtchASketch15() {
-		this.setTitle("Click once to toggle drawing, mimimize/maximize to shake (make blank)");
+	public NetPaintGUI() {
+		this.setTitle("Click once to toggle drawing, second click will lock the shape");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(100, 0);
 		setLayout(null);
 		setSize(900, 700);
+		
 		lineDraw = true;
 		rectDraw = false;
 		ovalDraw = false;
 		imageDraw = false;
 
-		drawingPanel = new EtchPanel2();
-		// Fill center of of a BorderLayout (panel fills all)
-
+		drawingPanel = new DrawingPanel();
 		canvasWindow = new JScrollPane(drawingPanel);
 		canvasWindow.setSize(600, 500);
 		add(canvasWindow);
@@ -166,7 +165,7 @@ public class EtchASketch15 extends JFrame {
 		}
 	}
 
-	private class EtchPanel2 extends JPanel {
+	private class DrawingPanel extends JPanel {
 
 		/**
 		 * 
@@ -182,9 +181,9 @@ public class EtchASketch15 extends JFrame {
 		private boolean isDrawing;
 		private PaintObject paint;
 		private ArrayList<PaintObject> paints = new ArrayList<PaintObject>();
-		private ArrayList<PaintObject> paintsBackup = new ArrayList<PaintObject>();
+		private ArrayList<PaintObject> lockedPaints = new ArrayList<PaintObject>();
 
-		public EtchPanel2() {
+		public DrawingPanel() {
 			setLayout(null);
 			setPreferredSize(new Dimension(1000, 1000));
 			isDrawing = false;
@@ -203,7 +202,7 @@ public class EtchASketch15 extends JFrame {
 			Graphics2D g2 = (Graphics2D) g;
 			for (PaintObject paint : paints)
 				g2.draw(paint.getShape());
-			for (PaintObject paint : paintsBackup)
+			for (PaintObject paint : lockedPaints)
 				g2.draw(paint.getShape());
 		}
 
@@ -234,7 +233,7 @@ public class EtchASketch15 extends JFrame {
 						}
 					paint.setOriginPoint(new Point(oldX, oldY));
 				} else
-					paintsBackup.add(paint);
+					lockedPaints.add(paint);
 			}
 
 			public void mouseMoved(MouseEvent evt) {
