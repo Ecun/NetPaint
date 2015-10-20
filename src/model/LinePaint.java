@@ -8,12 +8,9 @@ public class LinePaint extends PaintObject {
 
 	private Line2D line;
 	
-	public LinePaint() {
-		setOriginPoint(new Point(0,0));
-		setEndPoint(new Point(0,0));
+	public LinePaint(Point origin) {
+		super(origin);
 	}
-	
-	
 
 	@Override
 	public Shape getShape() {

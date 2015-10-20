@@ -1,5 +1,6 @@
 package model;
 
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
@@ -7,7 +8,8 @@ public class RectanglePaint extends PaintObject {
 
 	private Rectangle2D rectangle;
 
-	public RectanglePaint() {
+	public RectanglePaint(Point origin) {
+		super(origin);
 	}
 
 	private double getWidth() {

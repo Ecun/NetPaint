@@ -1,12 +1,14 @@
 package model;
 
+import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 
 public class OvalPaint extends PaintObject {
 	private Ellipse2D oval;
 
-	public OvalPaint() {
+	public OvalPaint(Point origin) {
+		super(origin);
 	}
 	
 	private double getWidth(){

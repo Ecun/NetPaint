@@ -219,19 +219,17 @@ public class NetPaintGUI extends JFrame {
 					oldX = evt.getX();
 					oldY = evt.getY();
 					if (lineDraw)
-						paint = new LinePaint();
+						paint = new LinePaint(new Point(oldX,oldY));
 					if(rectDraw)
-						paint = new RectanglePaint();
+						paint = new RectanglePaint(new Point(oldX,oldY));
 					if(ovalDraw)
-						paint = new OvalPaint();
+						paint = new OvalPaint(new Point(oldX,oldY));
 					if(imageDraw)
 						try {
-							paint = new ImagePaint();
+							paint = new ImagePaint(new Point(oldX,oldY));
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					paint.setOriginPoint(new Point(oldX, oldY));
 				} else
 					lockedPaints.add(paint);
 			}
@@ -253,7 +251,6 @@ public class NetPaintGUI extends JFrame {
 					paints.add(paint);
 					repaint();
 				}
-
 			}
 
 			public void mousePressed(MouseEvent evt) {

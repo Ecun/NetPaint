@@ -1,6 +1,7 @@
 package model;
 
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Shape;
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +12,8 @@ public class ImagePaint extends PaintObject {
 
 	private Image image;
 	
-	public ImagePaint() throws IOException{
+	public ImagePaint(Point origin) throws IOException{
+		super(origin);
 		image = ImageIO.read(new File("./image/doge.jpeg"));
 	}
 	@Override
@@ -21,8 +23,6 @@ public class ImagePaint extends PaintObject {
 	}
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

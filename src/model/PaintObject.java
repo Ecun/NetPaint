@@ -7,6 +7,10 @@ public abstract class PaintObject {
 	private Point origin;
 	private Point end;
 	
+	
+	public PaintObject(Point a){
+		setOriginPoint(a);
+	}
 	public void setOriginPoint(Point p){
 		this.origin = p;
 	}
