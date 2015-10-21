@@ -1,5 +1,7 @@
 package model;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
@@ -7,15 +9,15 @@ import java.awt.geom.Ellipse2D;
 public class OvalPaint extends PaintObject {
 	private Ellipse2D oval;
 
-	public OvalPaint(Point origin) {
-		super(origin);
+	public OvalPaint(Point origin,Color color) {
+		super(origin,color);
 	}
 	
-	private double getWidth(){
+	private int getWidth(){
 		return Math.abs(getEndPoint().x - getOriginPoint().x);
 	}
 	
-	private double getHeight(){
+	private int getHeight(){
 		return Math.abs(getEndPoint().y - getOriginPoint().y);
 	}
 
@@ -25,8 +27,9 @@ public class OvalPaint extends PaintObject {
 	}
 
 	@Override
-	public void draw() {
-		oval = new Ellipse2D.Double(Math.min(getOriginPoint().x, getEndPoint().x),
+	public void draw(Graphics g) {
+		g.setColor(getColor());
+		g.fillOval(Math.min(getOriginPoint().x, getEndPoint().x),
 				Math.min(getOriginPoint().y, getEndPoint().y), getWidth(), getHeight());
 	}
 }

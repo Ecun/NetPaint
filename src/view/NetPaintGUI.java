@@ -58,7 +58,7 @@ public class NetPaintGUI extends JFrame {
 		this.setLocation(100, 0);
 		setLayout(null);
 		setSize(900, 700);
-		
+
 		lineDraw = true;
 		rectDraw = false;
 		ovalDraw = false;
@@ -180,13 +180,17 @@ public class NetPaintGUI extends JFrame {
 
 		private boolean isDrawing;
 		private PaintObject paint;
-		private ArrayList<PaintObject> paints = new ArrayList<PaintObject>();
-		private ArrayList<PaintObject> lockedPaints = new ArrayList<PaintObject>();
+		private ArrayList<PaintObject> paints;
+		private PaintsList lockedPaints;
 
 		public DrawingPanel() {
 			setLayout(null);
 			setPreferredSize(new Dimension(1000, 1000));
 			isDrawing = false;
+			
+			paints = new ArrayList<PaintObject>();
+			lockedPaints = new PaintsList();
+			
 			ListenToMouse listener = new ListenToMouse();
 			this.addMouseMotionListener(listener);
 			this.addMouseListener(listener);
@@ -200,10 +204,9 @@ public class NetPaintGUI extends JFrame {
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
+			lockedPaints.drawEach(g2);
 			for (PaintObject paint : paints)
-				g2.draw(paint.getShape());
-			for (PaintObject paint : lockedPaints)
-				g2.draw(paint.getShape());
+				paint.draw(g2);
 		}
 
 		private class ListenToMouse implements MouseListener, MouseMotionListener {
@@ -219,14 +222,14 @@ public class NetPaintGUI extends JFrame {
 					oldX = evt.getX();
 					oldY = evt.getY();
 					if (lineDraw)
-						paint = new LinePaint(new Point(oldX,oldY));
-					if(rectDraw)
-						paint = new RectanglePaint(new Point(oldX,oldY));
-					if(ovalDraw)
-						paint = new OvalPaint(new Point(oldX,oldY));
-					if(imageDraw)
+						paint = new LinePaint(new Point(oldX, oldY),Color.BLUE);
+					if (rectDraw)
+						paint = new RectanglePaint(new Point(oldX, oldY), Color.GREEN);
+					if (ovalDraw)
+						paint = new OvalPaint(new Point(oldX, oldY), Color.red);
+					if (imageDraw)
 						try {
-							paint = new ImagePaint(new Point(oldX,oldY));
+							paint = new ImagePaint(new Point(oldX, oldY), Color.gray);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -244,9 +247,7 @@ public class NetPaintGUI extends JFrame {
 					newX = evt.getX();
 					newY = evt.getY();
 					System.out.println(newX + " Moved " + newY);
-
 					paint.setEndPoint(new Point(newX, newY));
-					paint.draw();
 					paints.clear();
 					paints.add(paint);
 					repaint();
