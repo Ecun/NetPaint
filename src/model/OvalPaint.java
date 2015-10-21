@@ -14,7 +14,7 @@ public class OvalPaint extends PaintObject {
 	}
 	
 	private int getWidth(){
-		return Math.abs(getEndPoint().x - getOriginPoint().x);
+		return getEndPoint().x - getOriginPoint().x;
 	}
 	
 	private int getHeight(){
