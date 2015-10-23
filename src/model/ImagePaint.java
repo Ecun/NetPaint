@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Shape;
 import java.io.File;
 import java.io.IOException;
 
@@ -26,11 +25,7 @@ public class ImagePaint extends PaintObject {
 	private int getHeight() {
 		return Math.abs(getEndPoint().y - getOriginPoint().y);
 	}
-	@Override
-	public Shape getShape() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(getColor());
