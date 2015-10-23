@@ -255,9 +255,6 @@ public class NetPaintGUI extends JFrame {
 			}
 
 			public void mousePressed(MouseEvent evt) {
-				newX = evt.getX();
-				newY = evt.getY();
-				System.out.println(newX + " Pressed " + newY);
 			}
 
 			public void mouseEntered(MouseEvent evt) {
@@ -267,9 +264,6 @@ public class NetPaintGUI extends JFrame {
 			}
 
 			public void mouseReleased(MouseEvent evt) {
-				newX = evt.getX();
-				newY = evt.getY();
-				System.out.println(newX + " Pressed " + newY);
 			}
 
 			public void mouseExited(MouseEvent evt) {
@@ -279,9 +273,6 @@ public class NetPaintGUI extends JFrame {
 			}
 
 			public void mouseDragged(MouseEvent evt) {
-				newX = evt.getX();
-				newY = evt.getY();
-				System.out.println(newX + " dragged " + newY);
 			}
 		}
 	}

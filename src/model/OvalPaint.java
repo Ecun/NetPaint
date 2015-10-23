@@ -3,27 +3,19 @@ package model;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 
 public class OvalPaint extends PaintObject {
-	private Ellipse2D oval;
 
 	public OvalPaint(Point origin,Color color) {
 		super(origin,color);
 	}
 	
 	private int getWidth(){
-		return getEndPoint().x - getOriginPoint().x;
+		return Math.abs(getEndPoint().x - getOriginPoint().x);
 	}
 	
 	private int getHeight(){
 		return Math.abs(getEndPoint().y - getOriginPoint().y);
-	}
-
-	@Override
-	public Shape getShape() {
-		return oval;
 	}
 
 	@Override

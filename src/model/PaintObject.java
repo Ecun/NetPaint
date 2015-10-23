@@ -3,7 +3,6 @@ package model;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.Shape;
 
 public abstract class PaintObject {
 	private Point origin;
@@ -36,6 +35,4 @@ public abstract class PaintObject {
 	}
 	
 	public abstract void draw(Graphics g);
-	
-	public abstract Shape getShape();
 }
