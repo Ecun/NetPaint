@@ -3,6 +3,7 @@
  */
 package view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -20,10 +21,14 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JColorChooser;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import model.*;
 
@@ -50,14 +55,18 @@ public class NetPaintGUI extends JFrame {
 	private JPanel drawingPanel;
 	private JScrollPane canvasWindow;
 	private JPanel optionPanel;
+	private JPanel colorPanel;
+
 	private boolean lineDraw, rectDraw, ovalDraw, imageDraw;
+
+	private Color newColor;
 
 	public NetPaintGUI() {
 		this.setTitle("Click once to toggle drawing, second click will lock the shape");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(100, 0);
 		setLayout(null);
-		setSize(900, 700);
+		setSize(900, 900);
 
 		lineDraw = true;
 		rectDraw = false;
@@ -66,14 +75,44 @@ public class NetPaintGUI extends JFrame {
 
 		drawingPanel = new DrawingPanel();
 		canvasWindow = new JScrollPane(drawingPanel);
-		canvasWindow.setSize(600, 500);
+		canvasWindow.setSize(900, 500);
 		add(canvasWindow);
 
 		optionPanel = new JPanel();
-		optionPanel.setSize(500, 40);
+		optionPanel.setSize(800, 40);
 		optionPanel.setLocation(0, 500);
 		setOptionMenu();
 		add(optionPanel);
+
+		colorPanel = new ColorChooser();
+		colorPanel.setSize(800, 200);
+		colorPanel.setLocation(0, 600);
+		add(colorPanel);
+
+	}
+
+	private class ColorChooser extends JPanel implements ChangeListener {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private JColorChooser tcc;
+
+		public ColorChooser() {
+			setLayout(new BorderLayout());
+			tcc = new JColorChooser();
+			tcc.getSelectionModel().addChangeListener(this);
+			tcc.setBorder(BorderFactory.createTitledBorder("Choose Text Color"));
+			add(tcc, BorderLayout.CENTER);
+		}
+
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			// TODO Auto-generated method stub
+			newColor = tcc.getColor();
+		}
+
 	}
 
 	public void setOptionMenu() {
@@ -187,10 +226,10 @@ public class NetPaintGUI extends JFrame {
 			setLayout(null);
 			setPreferredSize(new Dimension(1000, 1000));
 			isDrawing = false;
-			
+
 			paints = new ArrayList<PaintObject>();
 			lockedPaints = new PaintsList();
-			
+
 			ListenToMouse listener = new ListenToMouse();
 			this.addMouseMotionListener(listener);
 			this.addMouseListener(listener);
@@ -222,14 +261,14 @@ public class NetPaintGUI extends JFrame {
 					oldX = evt.getX();
 					oldY = evt.getY();
 					if (lineDraw)
-						paint = new LinePaint(new Point(oldX, oldY),Color.BLUE);
+						paint = new LinePaint(new Point(oldX, oldY), newColor);
 					if (rectDraw)
-						paint = new RectanglePaint(new Point(oldX, oldY), Color.GREEN);
+						paint = new RectanglePaint(new Point(oldX, oldY), newColor);
 					if (ovalDraw)
-						paint = new OvalPaint(new Point(oldX, oldY), Color.red);
+						paint = new OvalPaint(new Point(oldX, oldY), newColor);
 					if (imageDraw)
 						try {
-							paint = new ImagePaint(new Point(oldX, oldY), Color.gray);
+							paint = new ImagePaint(new Point(oldX, oldY), newColor);
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
