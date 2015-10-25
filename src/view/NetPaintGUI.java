@@ -179,6 +179,7 @@ public class NetPaintGUI extends JFrame {
 		private int oldX, oldY, newX, newY;
 
 		private boolean isDrawing;
+		private boolean isDraging;
 		private PaintObject paint;
 		private ArrayList<PaintObject> paints;
 		private PaintsList lockedPaints;
@@ -187,10 +188,11 @@ public class NetPaintGUI extends JFrame {
 			setLayout(null);
 			setPreferredSize(new Dimension(1000, 1000));
 			isDrawing = false;
-			
+			isDraging = false;
+
 			paints = new ArrayList<PaintObject>();
 			lockedPaints = new PaintsList();
-			
+
 			ListenToMouse listener = new ListenToMouse();
 			this.addMouseMotionListener(listener);
 			this.addMouseListener(listener);
@@ -213,36 +215,28 @@ public class NetPaintGUI extends JFrame {
 
 			// Use a mouse click to toggle the drawing
 			public void mouseClicked(MouseEvent evt) {
-				// TODO: Store the potential first point where the mouse gets
-				// clicked
-				// and toggle drawing so mouseMoved will know whether to draw or
-				// not
-				isDrawing = !isDrawing;
-				if (isDrawing) {
-					oldX = evt.getX();
-					oldY = evt.getY();
-					if (lineDraw)
-						paint = new LinePaint(new Point(oldX, oldY),Color.BLUE);
-					if (rectDraw)
-						paint = new RectanglePaint(new Point(oldX, oldY), Color.GREEN);
-					if (ovalDraw)
-						paint = new OvalPaint(new Point(oldX, oldY), Color.red);
-					if (imageDraw)
-						try {
-							paint = new ImagePaint(new Point(oldX, oldY), Color.gray);
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-				} else
-					lockedPaints.add(paint);
+				// isDrawing = !isDrawing;
+				// if (isDrawing) {
+				// oldX = evt.getX();
+				// oldY = evt.getY();
+				// if (lineDraw)
+				// paint = new LinePaint(new Point(oldX, oldY), Color.BLUE);
+				// if (rectDraw)
+				// paint = new RectanglePaint(new Point(oldX, oldY),
+				// Color.GREEN);
+				// if (ovalDraw)
+				// paint = new OvalPaint(new Point(oldX, oldY), Color.red);
+				// if (imageDraw)
+				// try {
+				// paint = new ImagePaint(new Point(oldX, oldY), Color.gray);
+				// } catch (IOException e) {
+				// e.printStackTrace();
+				// }
+				// } else
+				// lockedPaints.add(paint);
 			}
 
 			public void mouseMoved(MouseEvent evt) {
-				// TODO Construct a line between the oldX, oldY and where the
-				// mouse
-				// was just clicked, but only if drawing. Then call repaint that
-				// draws
-				// all of the lines.
 				if (isDrawing) {
 					newX = evt.getX();
 					newY = evt.getY();
@@ -255,6 +249,47 @@ public class NetPaintGUI extends JFrame {
 			}
 
 			public void mousePressed(MouseEvent evt) {
+				isDraging = true;
+				oldX = evt.getX();
+				oldY = evt.getY();
+				if (!isDrawing) {
+					if (lineDraw)
+						paint = new LinePaint(new Point(oldX, oldY), Color.BLUE);
+					if (rectDraw)
+						paint = new RectanglePaint(new Point(oldX, oldY), Color.GREEN);
+					if (ovalDraw)
+						paint = new OvalPaint(new Point(oldX, oldY), Color.red);
+					if (imageDraw)
+						try {
+							paint = new ImagePaint(new Point(oldX, oldY), Color.gray);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+				}
+			}
+
+			public void mouseReleased(MouseEvent evt) {
+				isDraging = false;
+				if (oldX == evt.getX() && oldY == evt.getY()) {
+					if (isDrawing)
+						lockedPaints.add(paint);
+					isDrawing = !isDrawing;
+				}
+				else
+					lockedPaints.add(paint);
+			}
+
+			public void mouseDragged(MouseEvent evt) {
+				if (isDraging) {
+					newX = evt.getX();
+					newY = evt.getY();
+					System.out.println(newX + " Draged " + newY);
+					paint.setEndPoint(new Point(newX, newY));
+					paints.clear();
+					paints.add(paint);
+					repaint();
+				}
+
 			}
 
 			public void mouseEntered(MouseEvent evt) {
@@ -263,16 +298,10 @@ public class NetPaintGUI extends JFrame {
 				System.out.println(newX + " Entered " + newY);
 			}
 
-			public void mouseReleased(MouseEvent evt) {
-			}
-
 			public void mouseExited(MouseEvent evt) {
 				newX = evt.getX();
 				newY = evt.getY();
 				System.out.println(newX + " Exited " + newY);
-			}
-
-			public void mouseDragged(MouseEvent evt) {
 			}
 		}
 	}
