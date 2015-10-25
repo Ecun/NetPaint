@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JColorChooser;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -30,7 +29,12 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import model.*;
+import model.ImagePaint;
+import model.LinePaint;
+import model.OvalPaint;
+import model.PaintObject;
+import model.PaintsList;
+import model.RectanglePaint;
 
 public class NetPaintGUI extends JFrame {
 
@@ -62,11 +66,11 @@ public class NetPaintGUI extends JFrame {
 	private Color newColor;
 
 	public NetPaintGUI() {
-		this.setTitle("Click once to toggle drawing, second click will lock the shape");
+		this.setTitle("Click once to toggle drawing, second click will lock the shape, or draging mouse to draw");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(100, 0);
 		setLayout(null);
-		setSize(900, 900);
+		setSize(900,770);
 
 		lineDraw = true;
 		rectDraw = false;
@@ -75,18 +79,18 @@ public class NetPaintGUI extends JFrame {
 
 		drawingPanel = new DrawingPanel();
 		canvasWindow = new JScrollPane(drawingPanel);
-		canvasWindow.setSize(900, 500);
+		canvasWindow.setSize(900, 400);
 		add(canvasWindow);
 
 		optionPanel = new JPanel();
 		optionPanel.setSize(800, 40);
-		optionPanel.setLocation(0, 500);
+		optionPanel.setLocation(0, 400);
 		setOptionMenu();
 		add(optionPanel);
 
 		colorPanel = new ColorChooser();
-		colorPanel.setSize(800, 200);
-		colorPanel.setLocation(0, 600);
+		colorPanel.setSize(800, 270);
+		colorPanel.setLocation(0, 450);
 		add(colorPanel);
 
 	}
@@ -224,7 +228,7 @@ public class NetPaintGUI extends JFrame {
 
 		public DrawingPanel() {
 			setLayout(null);
-			setPreferredSize(new Dimension(1000, 1000));
+			setPreferredSize(new Dimension(1500, 1000));
 			isDrawing = false;
 			isDraging = false;
 			
@@ -253,18 +257,6 @@ public class NetPaintGUI extends JFrame {
 
 			// Use a mouse click to toggle the drawing
 			public void mouseClicked(MouseEvent evt) {
-			}
-
-			public void mouseMoved(MouseEvent evt) {
-				if (isDrawing) {
-					newX = evt.getX();
-					newY = evt.getY();
-					System.out.println(newX + " Moved " + newY);
-					paint.setEndPoint(new Point(newX, newY));
-					paints.clear();
-					paints.add(paint);
-					repaint();
-				}
 			}
 
 			public void mousePressed(MouseEvent evt) {
@@ -298,6 +290,18 @@ public class NetPaintGUI extends JFrame {
 					lockedPaints.add(paint);
 			}
 
+			public void mouseMoved(MouseEvent evt) {
+				if (isDrawing) {
+					newX = evt.getX();
+					newY = evt.getY();
+					System.out.println(newX + " Moved " + newY);
+					paint.setEndPoint(new Point(newX, newY));
+					paints.clear();
+					paints.add(paint);
+					repaint();
+				}
+			}
+
 			public void mouseDragged(MouseEvent evt) {
 				if (isDraging) {
 					newX = evt.getX();
@@ -308,7 +312,6 @@ public class NetPaintGUI extends JFrame {
 					paints.add(paint);
 					repaint();
 				}
-
 			}
 
 			public void mouseEntered(MouseEvent evt) {
