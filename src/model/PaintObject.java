@@ -3,8 +3,13 @@ package model;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.io.Serializable;
 
-public abstract class PaintObject {
+public abstract class PaintObject implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8138054518284502873L;
 	private Point origin;
 	private Point end;
 	private Color color;

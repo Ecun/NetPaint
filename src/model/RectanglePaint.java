@@ -6,6 +6,11 @@ import java.awt.Point;
 
 public class RectanglePaint extends PaintObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7535841925280973660L;
+
 	public RectanglePaint(Point origin, Color color) {
 		super(origin, color);
 	}

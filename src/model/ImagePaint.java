@@ -11,6 +11,10 @@ import javax.imageio.ImageIO;
 
 public class ImagePaint extends PaintObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7517779599011317377L;
 	private Image image;
 	
 	public ImagePaint(Point origin, Color color) throws IOException{

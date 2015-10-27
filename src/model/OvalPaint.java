@@ -6,6 +6,11 @@ import java.awt.Point;
 
 public class OvalPaint extends PaintObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8582497749014173408L;
+
 	public OvalPaint(Point origin,Color color) {
 		super(origin,color);
 	}
