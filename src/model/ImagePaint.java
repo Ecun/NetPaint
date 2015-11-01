@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class ImagePaint extends PaintObject {
 
@@ -15,11 +16,11 @@ public class ImagePaint extends PaintObject {
 	 * 
 	 */
 	private static final long serialVersionUID = 7517779599011317377L;
-	private Image image;
+	private ImageIcon image;
 	
 	public ImagePaint(Point origin, Color color) throws IOException{
 		super(origin, color);
-		image = ImageIO.read(new File("./image/doge.jpeg"));
+		image = new ImageIcon(ImageIO.read(new File("./image/doge.jpeg")));
 	}
 	
 	private int getWidth() {
@@ -33,7 +34,8 @@ public class ImagePaint extends PaintObject {
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(getColor());
-		g.drawImage(image, Math.min(getOriginPoint().x, getEndPoint().x),
+		Image imageDrawing = image.getImage();
+		g.drawImage(imageDrawing, Math.min(getOriginPoint().x, getEndPoint().x),
 				Math.min(getOriginPoint().y, getEndPoint().y), getWidth(), getHeight(), null);
 	}
 

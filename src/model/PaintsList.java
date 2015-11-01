@@ -2,10 +2,9 @@ package model;
 
 import java.awt.Graphics;
 import java.io.Serializable;
-import java.util.Observable;
 import java.util.Vector;
 
-public class PaintsList extends Observable implements Serializable{
+public class PaintsList implements Serializable{
 	/**
 	 * 
 	 */
@@ -16,21 +15,7 @@ public class PaintsList extends Observable implements Serializable{
 		lockedPaints = new Vector<PaintObject>();
 	}
 	
-	public Vector<PaintObject> getAllPaints(){
-		return lockedPaints;
-	}
-	
-	public void addAll(PaintsList paints){
-		lockedPaints.addAll(paints.getAllPaints());
-	}
-	
 	public void add(PaintObject paint){
-		lockedPaints.add(paint);
-		setChanged();
-		notifyObservers(paint);
-	}
-	
-	public void addFromServer(PaintObject paint){
 		lockedPaints.add(paint);
 	}
 	
