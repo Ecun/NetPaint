@@ -17,7 +17,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -35,8 +39,9 @@ import model.OvalPaint;
 import model.PaintObject;
 import model.PaintsList;
 import model.RectanglePaint;
+import network.Server;
 
-public class NetPaintGUI extends JFrame {
+public class NetPaintGUI extends JFrame implements Runnable {
 
 	/**
 	 * 
@@ -46,15 +51,6 @@ public class NetPaintGUI extends JFrame {
 	static final String rectangleString = "Rectangle";
 	static final String ovalString = "Oval";
 	static final String imageString = "Image";
-
-	public static void main(String[] args) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JFrame frame = new NetPaintGUI();
-				frame.setVisible(true);
-			}
-		});
-	}
 
 	private JPanel drawingPanel;
 	private JScrollPane canvasWindow;
@@ -70,7 +66,8 @@ public class NetPaintGUI extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocation(100, 0);
 		setLayout(null);
-		setSize(900,770);
+		setSize(900, 770);
+		setVisible(true);
 
 		lineDraw = true;
 		rectDraw = false;
@@ -92,29 +89,6 @@ public class NetPaintGUI extends JFrame {
 		colorPanel.setSize(800, 270);
 		colorPanel.setLocation(0, 450);
 		add(colorPanel);
-
-	}
-
-	private class ColorChooser extends JPanel implements ChangeListener {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
-		private JColorChooser tcc;
-
-		public ColorChooser() {
-			setLayout(new BorderLayout());
-			tcc = new JColorChooser();
-			tcc.getSelectionModel().addChangeListener(this);
-			tcc.setBorder(BorderFactory.createTitledBorder("Choose Text Color"));
-			add(tcc, BorderLayout.CENTER);
-		}
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			newColor = tcc.getColor();
-		}
 
 	}
 
@@ -223,16 +197,20 @@ public class NetPaintGUI extends JFrame {
 		private boolean isDrawing;
 		private boolean isDraging;
 		private PaintObject paint;
-		private ArrayList<PaintObject> paints;
+		private Vector<PaintObject> paints;
 		private PaintsList lockedPaints;
+
+		Socket socket;
+		ObjectOutputStream oos;
+		ObjectInputStream ois;
 
 		public DrawingPanel() {
 			setLayout(null);
 			setPreferredSize(new Dimension(1500, 1000));
 			isDrawing = false;
 			isDraging = false;
-			
-			paints = new ArrayList<PaintObject>();
+
+			this.paints = new Vector<PaintObject>();
 			lockedPaints = new PaintsList();
 
 			ListenToMouse listener = new ListenToMouse();
@@ -240,6 +218,11 @@ public class NetPaintGUI extends JFrame {
 			this.addMouseListener(listener);
 
 			this.setBackground(Color.white);
+
+			openConnection();
+
+			ServerListener thread1 = new ServerListener();
+			thread1.start();
 		}
 
 		// This where all the drawing occurs. Run this by calling repaint()
@@ -251,6 +234,48 @@ public class NetPaintGUI extends JFrame {
 			lockedPaints.drawEach(g2);
 			for (PaintObject paint : paints)
 				paint.draw(g2);
+		}
+
+		private void openConnection() {
+			try {
+				socket = new Socket("localHost", Server.PORT_NUMBER);
+				oos = new ObjectOutputStream(socket.getOutputStream());
+				ois = new ObjectInputStream(socket.getInputStream());
+				try {
+					lockedPaints = (PaintsList) ois.readObject();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+		private class ServerListener extends Thread {
+
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						PaintObject paint = (PaintObject) ois.readObject();
+						lockedPaints.addFromServer(paint);
+						System.out.println("get paint from server");
+						repaint();
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 
 		private class ListenToMouse implements MouseListener, MouseMotionListener {
@@ -282,12 +307,25 @@ public class NetPaintGUI extends JFrame {
 			public void mouseReleased(MouseEvent evt) {
 				isDraging = false;
 				if (oldX == evt.getX() && oldY == evt.getY()) {
-					if (isDrawing)
+					if (isDrawing) {
 						lockedPaints.add(paint);
+						try {
+							oos.writeObject(paint);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					isDrawing = !isDrawing;
-				}
-				else
+				} else {
 					lockedPaints.add(paint);
+					try {
+						oos.writeObject(paint);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 
 			public void mouseMoved(MouseEvent evt) {
@@ -326,6 +364,35 @@ public class NetPaintGUI extends JFrame {
 				System.out.println(newX + " Exited " + newY);
 			}
 		}
+	}
+
+	private class ColorChooser extends JPanel implements ChangeListener {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private JColorChooser tcc;
+
+		public ColorChooser() {
+			setLayout(new BorderLayout());
+			tcc = new JColorChooser();
+			tcc.getSelectionModel().addChangeListener(this);
+			tcc.setBorder(BorderFactory.createTitledBorder("Choose Text Color"));
+			add(tcc, BorderLayout.CENTER);
+		}
+
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			newColor = tcc.getColor();
+		}
+
+	}
+
+	@Override
+	public void run() {
+		new NetPaintGUI();
+
 	}
 
 }
