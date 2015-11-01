@@ -22,7 +22,6 @@ public class Client implements Runnable, Observer{
 	
 	public Client(){
 		paints = new PaintsList();
-		paints.addObserver(this);
 		new NetPaintGUI();
 	}
 	
@@ -33,7 +32,7 @@ public class Client implements Runnable, Observer{
 			ois = new ObjectInputStream(socket.getInputStream());
 			try {
 				PaintsList paintFromServer = (PaintsList) ois.readObject();
-				paints.addAll(paintFromServer);
+
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -74,7 +73,6 @@ public class Client implements Runnable, Observer{
 			while(true){
 				try {
 					PaintObject paint = (PaintObject) ois.readObject();
-					paints.addFromServer(paint);
 				} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

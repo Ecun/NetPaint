@@ -41,7 +41,7 @@ import model.PaintsList;
 import model.RectanglePaint;
 import network.Server;
 
-public class NetPaintGUI extends JFrame implements Runnable {
+public class NetPaintGUI extends JFrame{
 
 	/**
 	 * 
@@ -259,13 +259,13 @@ public class NetPaintGUI extends JFrame implements Runnable {
 
 		private class ServerListener extends Thread {
 
+			
 			@Override
 			public void run() {
 				while (true) {
 					try {
-						PaintObject paint = (PaintObject) ois.readObject();
-						lockedPaints.addFromServer(paint);
-						System.out.println("get paint from server");
+						lockedPaints = (PaintsList) ois.readObject();
+						System.out.println("get paints from server");
 						repaint();
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -310,7 +310,7 @@ public class NetPaintGUI extends JFrame implements Runnable {
 					if (isDrawing) {
 						lockedPaints.add(paint);
 						try {
-							oos.writeObject(paint);
+							oos.writeObject(lockedPaints);
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -320,7 +320,7 @@ public class NetPaintGUI extends JFrame implements Runnable {
 				} else {
 					lockedPaints.add(paint);
 					try {
-						oos.writeObject(paint);
+						oos.writeObject(lockedPaints);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -332,7 +332,6 @@ public class NetPaintGUI extends JFrame implements Runnable {
 				if (isDrawing) {
 					newX = evt.getX();
 					newY = evt.getY();
-					System.out.println(newX + " Moved " + newY);
 					paint.setEndPoint(new Point(newX, newY));
 					paints.clear();
 					paints.add(paint);
@@ -344,7 +343,6 @@ public class NetPaintGUI extends JFrame implements Runnable {
 				if (isDraging) {
 					newX = evt.getX();
 					newY = evt.getY();
-					System.out.println(newX + " Draged " + newY);
 					paint.setEndPoint(new Point(newX, newY));
 					paints.clear();
 					paints.add(paint);
@@ -355,13 +353,11 @@ public class NetPaintGUI extends JFrame implements Runnable {
 			public void mouseEntered(MouseEvent evt) {
 				newX = evt.getX();
 				newY = evt.getY();
-				System.out.println(newX + " Entered " + newY);
 			}
 
 			public void mouseExited(MouseEvent evt) {
 				newX = evt.getX();
 				newY = evt.getY();
-				System.out.println(newX + " Exited " + newY);
 			}
 		}
 	}
@@ -386,12 +382,6 @@ public class NetPaintGUI extends JFrame implements Runnable {
 		public void stateChanged(ChangeEvent e) {
 			newColor = tcc.getColor();
 		}
-
-	}
-
-	@Override
-	public void run() {
-		new NetPaintGUI();
 
 	}
 

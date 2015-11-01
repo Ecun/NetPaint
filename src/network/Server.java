@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import model.PaintObject;
 import model.PaintsList;
 
 public class Server implements Runnable {
@@ -26,18 +25,28 @@ public class Server implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Listening");
 		paints = new PaintsList();
+		System.out.println("Listening");
 		while (isRunning) {
 			Socket sock = null;
+			ObjectInputStream fromClient = null;
 			try {
 				sock = ssock.accept();
 			} catch (IOException e) {
 				cleanUp();
 				return;
 			}
+			try {
+				fromClient = new ObjectInputStream(sock.getInputStream());
+				ObjectOutputStream toClient = new ObjectOutputStream(sock.getOutputStream());
+				clients.add(toClient);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			System.out.println("Connected-----------");
-			new Thread(new ClientHandler(sock)).start();
+			new Thread(new ClientHandler(clients, fromClient)).start();
 		}
 	}
 
@@ -55,55 +64,45 @@ public class Server implements Runnable {
 
 	private class ClientHandler implements Runnable {
 
-		Socket client;
-		ObjectInputStream fromClient = null;
-		ObjectOutputStream toClient = null;
+		ObjectInputStream ois;
+		List<ObjectOutputStream> clients;
 		
-		ClientHandler(Socket client) {
-			this.client = client;
-			clients.add(toClient);
+		ClientHandler(List<ObjectOutputStream> clients, ObjectInputStream ois) {
+			this.clients = clients;
+			this.ois = ois;
 		}
 
 		@Override
 		public void run() {
 			try {
-				fromClient = new ObjectInputStream(client.getInputStream());
-				toClient = new ObjectOutputStream(client.getOutputStream());
-				toClient.writeObject(paints);
-				
-				PaintObject paint = null;
+	
+				writePaintListToClient();
 				while (true) {
 					try {
-						paint = (PaintObject) fromClient.readObject();
-						paints.add(paint);
+						paints = (PaintsList) ois.readObject();
 						System.out.println("add paints to server");
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					writePaintsToClient(paint);
+					writePaintListToClient();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				client.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
 		}
 		
-		private void writePaintsToClient(PaintObject paint){
-			for(ObjectOutputStream client: clients){
+		private void writePaintListToClient(){
+			for(ObjectOutputStream toClient: clients){
 				try {
-					client.writeObject(paint);
+					toClient.writeObject(paints);
 					System.out.println("write paints to client");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-		};
+		}
 	}
 }
