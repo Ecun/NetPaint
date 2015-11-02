@@ -308,6 +308,7 @@ public class NetPaintGUI extends JFrame{
 				isDraging = false;
 				if (oldX == evt.getX() && oldY == evt.getY()) {
 					if (isDrawing) {
+						paint.setEndPoint(new Point(evt.getX(), evt.getY()));
 						lockedPaints.add(paint);
 						try {
 							oos.writeObject(lockedPaints);

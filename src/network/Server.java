@@ -96,6 +96,7 @@ public class Server implements Runnable {
 		private void writePaintListToClient(){
 			for(ObjectOutputStream toClient: clients){
 				try {
+					toClient.reset();
 					toClient.writeObject(paints);
 					System.out.println("write paints to client");
 				} catch (IOException e) {
