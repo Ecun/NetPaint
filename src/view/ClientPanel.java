@@ -1,4 +1,5 @@
 package view;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +14,7 @@ public class ClientPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 8594443841608574510L;
 	private JButton painterButton;
-	
+
 	public ClientPanel() {
 		setSize(400, 200);
 		setVisible(true);
@@ -22,7 +23,7 @@ public class ClientPanel extends JPanel {
 
 		painterButton = new JButton("Call new Painter");
 		add(painterButton);
-		
+
 		registerListener();
 	}
 
@@ -34,7 +35,12 @@ public class ClientPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		   new NetPaintGUI();
+			javax.swing.SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					new NetPaintGUI();
+				}
+			});
 		}
 	}
 }
