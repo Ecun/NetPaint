@@ -56,6 +56,7 @@ public class NetPaintGUI extends JFrame{
 	private JScrollPane canvasWindow;
 	private JPanel optionPanel;
 	private JPanel colorPanel;
+	private PaintsList lockedPaints;
 
 	private boolean lineDraw, rectDraw, ovalDraw, imageDraw;
 
@@ -101,7 +102,6 @@ public class NetPaintGUI extends JFrame{
 		lineButton.setMnemonic(KeyEvent.VK_B);
 		lineButton.setActionCommand(lineString);
 		lineButton.setSelected(true);
-		lineButton.addItemListener(new lineButtonListener());
 
 		JRadioButton rectangleButton = new JRadioButton(rectangleString);
 		rectangleButton.setMnemonic(KeyEvent.VK_C);
@@ -198,7 +198,6 @@ public class NetPaintGUI extends JFrame{
 		private boolean isDraging;
 		private PaintObject paint;
 		private Vector<PaintObject> paints;
-		private PaintsList lockedPaints;
 
 		Socket socket;
 		ObjectOutputStream oos;
@@ -285,10 +284,10 @@ public class NetPaintGUI extends JFrame{
 			}
 
 			public void mousePressed(MouseEvent evt) {
-				isDraging = true;
 				oldX = evt.getX();
 				oldY = evt.getY();
 				if (!isDrawing) {
+					isDraging = true;
 					if (lineDraw)
 						paint = new LinePaint(new Point(oldX, oldY), newColor);
 					if (rectDraw)
@@ -302,21 +301,21 @@ public class NetPaintGUI extends JFrame{
 							e.printStackTrace();
 						}
 				}
+				else{
+					paint.setEndPoint(new Point(evt.getX(), evt.getY()));
+					lockedPaints.add(paint);
+					try {
+						oos.writeObject(lockedPaints);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 
 			public void mouseReleased(MouseEvent evt) {
 				isDraging = false;
 				if (oldX == evt.getX() && oldY == evt.getY()) {
-					if (isDrawing) {
-						paint.setEndPoint(new Point(evt.getX(), evt.getY()));
-						lockedPaints.add(paint);
-						try {
-							oos.writeObject(lockedPaints);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
 					isDrawing = !isDrawing;
 				} else {
 					lockedPaints.add(paint);
