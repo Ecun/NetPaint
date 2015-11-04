@@ -64,7 +64,7 @@ public class NetPaintGUI extends JFrame{
 
 	public NetPaintGUI() {
 		this.setTitle("Click once to toggle drawing, second click will lock the shape, or draging mouse to draw");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocation(100, 0);
 		setLayout(null);
 		setSize(900, 770);
@@ -384,5 +384,4 @@ public class NetPaintGUI extends JFrame{
 		}
 
 	}
-
 }

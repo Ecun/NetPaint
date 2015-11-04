@@ -52,6 +52,7 @@ public class Server implements Runnable {
 
 	public void stop() throws IOException {
 		isRunning = false;
+		ssock.close();
 	}
 
 	public void cleanUp() {
