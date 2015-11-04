@@ -15,7 +15,7 @@ public class Server implements Runnable {
 	public static int PORT_NUMBER = 4007;
 	ServerSocket ssock = null;
 	volatile boolean isRunning = true;
-	private static List<ObjectOutputStream> clients = Collections.synchronizedList(new ArrayList<>());
+	private static List<ObjectOutputStream> clients = Collections.synchronizedList(new ArrayList<ObjectOutputStream>());
 	private PaintsList paints;
 
 	@Override

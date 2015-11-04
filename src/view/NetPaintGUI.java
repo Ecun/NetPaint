@@ -374,7 +374,7 @@ public class NetPaintGUI extends JFrame{
 			setLayout(new BorderLayout());
 			tcc = new JColorChooser();
 			tcc.getSelectionModel().addChangeListener(this);
-			tcc.setBorder(BorderFactory.createTitledBorder("Choose Text Color"));
+			tcc.setBorder(BorderFactory.createTitledBorder("Choose Color"));
 			add(tcc, BorderLayout.CENTER);
 		}
 
